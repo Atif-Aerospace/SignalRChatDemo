@@ -3,7 +3,27 @@
 var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
 //Disable the send button until connection is established.
-document.getElementById("sendButton").disabled = true;
+//document.getElementById("sendButton").disabled = true;
+
+connection.on("CreateDataObjects", function (dataObjects_JsonString) {
+    for (let i = 0; i < dataObjects_JsonString.length; i++) {
+        let dataObject_JsonString = ddd[i];
+        let dataObject_Json = JSON.parse(dataObject_JsonString)
+        AddDataNode(dataObject_Json);
+        //console.log('Data Created on Client Side: ' + JSON.stringify(dataJson));
+        console.log('Data Created on Client Side: ' + dataObject_JsonString);
+    }
+});
+
+connection.on("DeleteDataObjects", function (dataObjects_JsonString) {
+    for (let i = 0; i < dataObjects_JsonString.length; i++) {
+        let dataObject_JsonString = ddd[i];
+        let dataObject_Json = JSON.parse(dataObject_JsonString)
+        DeleteDataNode(dataObject_Json);
+        //console.log('Data Created on Client Side: ' + JSON.stringify(dataJson));
+        console.log('Data Deleted on Client Side: ' + dataObject_JsonString);
+    }
+});
 
 connection.on("ReceiveMessage", function (user, message) {
     var li = document.createElement("li");
@@ -15,16 +35,19 @@ connection.on("ReceiveMessage", function (user, message) {
 });
 
 connection.start().then(function () {
-    document.getElementById("sendButton").disabled = false;
+    //document.getElementById("sendButton").disabled = false;
 }).catch(function (err) {
     return console.error(err.toString());
 });
 
-document.getElementById("sendButton").addEventListener("click", function (event) {
-    var user = document.getElementById("userInput").value;
-    var message = document.getElementById("messageInput").value;
-    connection.invoke("SendMessage", user, message).catch(function (err) {
-        return console.error(err.toString());
-    });
-    event.preventDefault();
-});
+//document.getElementById("sendButton").addEventListener("click", function (event) {
+//    var user = document.getElementById("userInput").value;
+//    var message = document.getElementById("messageInput").value;
+//    connection.invoke("SendMessage", user, message).catch(function (err) {
+//        return console.error(err.toString());
+//    });
+//    event.preventDefault();
+//});
+
+
+
