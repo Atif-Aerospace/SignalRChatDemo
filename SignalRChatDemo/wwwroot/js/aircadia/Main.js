@@ -1,8 +1,8 @@
-﻿var AirCADiaNebosURI = 'http://127.0.0.1:3001/';
-var CurrentProjectURI = 'http://127.0.0.1:3002/';
+﻿////var AirCADiaNebosURI = 'http://127.0.0.1:3001/';
+////var CurrentProjectURI = 'http://127.0.0.1:3002/';
 
-//var AirCADiaNebosURI = 'https://aircadia.azurewebsites.net/';
-//var CurrentProjectURI = 'https://aircadiawindturbine.azurewebsites.net/';
+var AirCADiaNebosURI = 'https://aircadia.azurewebsites.net/';
+var CurrentProjectURI = 'https://aircadiawindturbine.azurewebsites.net/';
 
 
 
