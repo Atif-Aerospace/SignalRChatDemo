@@ -32,6 +32,20 @@ namespace SignalRChatDemo.Hubs
             await Clients.All.SendAsync("DeleteDataObjects", dataObjects_JsonString);
         }
 
+
+
+
+
+        public async Task CreateModelObject(string modelObject_JsonString)
+        {
+            await Clients.All.SendAsync("CreateModelObject", modelObject_JsonString);
+        }
+
+        public async Task CreateWorkflowObject(string workflowObject_JsonString)
+        {
+            await Clients.All.SendAsync("CreateWorkflowObject", workflowObject_JsonString);
+        }
+
         public async Task SendMessage(string username, string message)
         {
             await Clients.All.SendAsync("ReceiveMessage", username, message);

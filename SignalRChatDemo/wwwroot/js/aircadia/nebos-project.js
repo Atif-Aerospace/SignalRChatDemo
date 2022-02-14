@@ -116,8 +116,32 @@
         dataObjects.push({ "name": "spar_pts_deformed_left_y", "category": "system.discipline.aerodynamics", "description": "mesh_undeformed", "type": "DoubleVector", "value": "0.0", "unit": "", "minValue": "0", "maxValue": "100" });
         dataObjects.push({ "name": "spar_pts_deformed_left_z", "category": "system.discipline.aerodynamics", "description": "mesh_undeformed", "type": "DoubleVector", "value": "0.0", "unit": "", "minValue": "0", "maxValue": "100" });
 
-        for (let i = 0; i < dataObjects.length; i++) {
-            CreateDataObjects_WebService(dataObjects[i]);
-        }
+
+        CreateDataObjects_WebService(dataObjects);
+    }
+
+    importModels() {
+        let modelObjects = [];
+        modelObjects.push({ "name": "SW", "category": "system.discipline.geometry", "description": "Reference wing area", "type": "Double", "value": "383.74", "unit": "[m2]", "minValue": "0", "maxValue": "100" });
+
+
+        modelObjects.push(
+            {
+                "name": "AddNumbers",
+                "description": "",
+                "endPoint": 'https://aircadiatest1.azurewebsites.net/api/modelexecution',
+                "inputs": [
+                    { "name": "x1", "value": 2 },
+                    { "name": "x2", "value": 34 }
+                ],
+                "outputs": [
+                    { "name": "y1", "value": 0 }
+                ]
+            },
+        )
+
+            
+
+        CreateModelObjects_WebService(modelObjects);
     }
 }

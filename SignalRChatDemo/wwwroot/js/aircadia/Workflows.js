@@ -270,6 +270,16 @@ async function CreateWorkflow() {
         workflowJson.scheduledComponents = CreateWorkflowUI_SelectedWorkflowComponents;
 
 
+
+
+
+
+
+
+        // ##########################################
+        // #region Web Service to Create Workflow Object
+        // ##########################################
+
         let uri = nebosProject.endPoint.concat('create-workflow');
 
         let voto = JSON.stringify(workflowJson);
@@ -286,11 +296,15 @@ async function CreateWorkflow() {
         let result = await response.json();
         // #endregion
 
+        let vvvvvv = JSON.stringify(workflowJson);
         console.log('Workflow Created on Client Side: ' + JSON.stringify(workflowJson));
         // create view of the newly created workflow on all the connected clients
         let responseStatus = result['Result'];
         if (responseStatus == 'Workflow Created') {
-            socket.emit('create_workflow', workflowJson);
+            connection.invoke("CreateWorkflowObject", JSON.stringify(workflowJson)).catch(function (err) {
+                return console.error(err.toString());
+            });
+            //socket.emit('create_workflow', workflowJson);
         }
     }
 

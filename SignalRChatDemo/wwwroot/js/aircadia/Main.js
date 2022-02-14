@@ -1,8 +1,8 @@
-﻿////var AirCADiaNebosURI = 'http://127.0.0.1:3001/';
-////var CurrentProjectURI = 'http://127.0.0.1:3002/';
+﻿var AirCADiaNebosURI = 'http://127.0.0.1:3001/';
+var CurrentProjectURI = 'http://127.0.0.1:3002/';
 
-var AirCADiaNebosURI = 'https://aircadia.azurewebsites.net/';
-var CurrentProjectURI = 'https://aircadiawindturbine.azurewebsites.net/';
+//var AirCADiaNebosURI = 'https://aircadia.azurewebsites.net/';
+//var CurrentProjectURI = 'https://aircadiawindturbine.azurewebsites.net/';
 
 
 
@@ -519,7 +519,7 @@ function displayTime() {
     //initialiseProject();
 }
 
-const createClock = setInterval(displayTime, 30000);
+//const createClock = setInterval(displayTime, 30000);
 
 async function DeleteSelectedObject() {
     if (true) {
@@ -565,7 +565,7 @@ async function DeleteSelectedObject() {
 
                     // delete data
                     //socket.emit('create_data', dataJson);
-                    connection.invoke("DeleteDataObjects", JSON.stringify(dataJson)).catch(function (err) {
+                    connection.invoke("DeleteDataObject", JSON.stringify(dataJson)).catch(function (err) {
                         return console.error(err.toString());
                     });
 
@@ -1499,16 +1499,10 @@ var grid_Execute =
                         id: "ExecutionTreeModelsNode", open: true, value: "Models", data: []
                     },
                     {
-                        id: "ExecutionTreeWorkflowsNode", open: true, value: "Workflows", data: [
-                            { id: "3.1", value: "Workflow 1" },
-                            { id: "3.2", value: "Workflow 2" }
-                        ]
+                        id: "ExecutionTreeWorkflowsNode", open: true, value: "Workflows", data: []
                     },
                     {
-                        id: "ExecutionTreeStudiesNode", open: true, value: "Studies", data: [
-                            { id: "4.1", value: "Study 1" },
-                            { id: "4.2", value: "Study 2" }
-                        ]
+                        id: "ExecutionTreeStudiesNode", open: true, value: "Studies", data: []
                     }
                 ]
         },
@@ -1642,7 +1636,7 @@ function treeViewExecution_ItemClick(id) {
                     data = nebosProject['data'][j];
             }
             let item = {};
-            item.id = i;
+            //item.id = i;
             item.category = data.category;
             item.name = data.name;
             item.value = data.value;
@@ -1652,7 +1646,7 @@ function treeViewExecution_ItemClick(id) {
         // outputs
         for (let i = 0; i < workflow.outputs.length; i++) {
             let item = {};
-            item.id = i;
+            //item.id = i;
             item.category = workflow.outputs[i].category;
             item.name = workflow.outputs[i].name;
             item.value = workflow.outputs[i].value;
@@ -1695,21 +1689,32 @@ async function executeModel() {
         jData.inputs = [];
         for (let i = 0; i < model.inputs.length; i++) {
             let dataName = model.inputs[i].name;
+            let data = nebosProject.getData(dataName);
+            let dataType = data.type;
             var gridRecord = $$("executionTable").getItem($$("executionTable").getIdByIndex(i));
-            jData.inputs.push({ name: dataName, value: gridRecord.value });
+            jData.inputs.push({ name: dataName, type: dataType, value: gridRecord.value });
         }
         jData.outputs = [];
         for (let i = 0; i < model.outputs.length; i++) {
             let dataName = model.outputs[i].name;
-            jData.outputs.push({ name: dataName, value: 0 });
+            let data = nebosProject.getData(dataName);
+            let dataType = data.type;
+            jData.outputs.push({ name: dataName, type: dataType, value: "0" });
         }
         // #endregion
 
         let poni = JSON.stringify(jData);
 
+
+
+
+
+
+
         // #region execution
         let response = await fetch(model.endPoint, {
             method: 'POST',
+            //mode: 'no-cors',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
             },
@@ -1737,6 +1742,7 @@ async function executeModel() {
             let dataName = workflow.inputs[i].name;
             var gridRecord = $$("executionTable").getItem($$("executionTable").getIdByIndex(i));
             jData.inputs.push({ name: dataName, value: gridRecord.value });
+            workflow.inputs[i].value = gridRecord.value;
         }
         jData.outputs = [];
         for (let i = 0; i < workflow.outputs.length; i++) {
@@ -1745,22 +1751,22 @@ async function executeModel() {
         }
         // #endregion
 
-        let poni = JSON.stringify(jData);
+        let poni = JSON.stringify(workflow);
 
         // #region execution
-        let response = await fetch(workflow.endPoint, {
+        let response = await fetch("https://localhost:44313/api/executeworkflow", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
             },
-            body: JSON.stringify(jData)
+            body: JSON.stringify(workflow)
         });
         let result = await response.json();
         // #endregion
 
         // #region outputs
-        for (let i = 0; i < model.outputs.length; i++) {
-            let row_id = $$("executionTable").getIdByIndex(i + model.inputs.length)
+        for (let i = 0; i < workflow.outputs.length; i++) {
+            let row_id = $$("executionTable").getIdByIndex(i + workflow.inputs.length)
             $$("executionTable").updateItem(row_id, { value: result.outputs[i].value });
         }
         // #endregion

@@ -209,7 +209,7 @@ function UpdateAvailableDataList() {
 }
 
 // call the web service for creating data
-async function CreateModel() {
+function CreateModel() {
     if (isModelNameValid($$("modelName").getValue()) === true) {
         // #region prepare request json data
         let modelJson = {};
@@ -233,27 +233,36 @@ async function CreateModel() {
             });
         // #endregion
 
-        console.log('Model JSON: ' + JSON.stringify(modelJson));
-        let uri = nebosProject.endPoint.concat('create-model');
-
-        // #region execution
-        let response = await fetch(uri, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8'
-            },
-            body: JSON.stringify(modelJson)
-        });
-        let result = await response.json();
-        // #endregion
-
-        // create view of the newly created model on all the connected clients
-        let responseStatus = result['Result'];
-        if (responseStatus == 'Model Created') {
-            socket.emit('create_model', modelJson);
-        }
+        CreateModel_WebService(modelJson)
     }
 
+}
+
+// call the web service for creating data
+async function CreateModel_WebService(modelJson) {
+    let uri = nebosProject.endPoint.concat('create-model');
+
+    // #region execution
+    let response = await fetch(uri, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+        },
+        body: JSON.stringify(modelJson)
+    });
+    let result = await response.json();
+    // #endregion
+
+    // create view of the newly created model on all the connected clients
+    let responseStatus = result['Result'];
+    if (responseStatus == 'Model Created') {
+        // create model
+        connection.invoke("CreateModelObject", JSON.stringify(modelJson)).catch(function (err) {
+            return console.error(err.toString());
+        });
+    }
+
+    
 }
 
 function AddModelNode(modelJson) {
