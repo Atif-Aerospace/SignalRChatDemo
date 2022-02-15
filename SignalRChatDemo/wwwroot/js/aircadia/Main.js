@@ -1,8 +1,10 @@
-﻿////var AirCADiaNebosURI = 'http://127.0.0.1:3001/';
-////var CurrentProjectURI = 'http://127.0.0.1:3002/';
+﻿var AirCADiaNebosURI = 'http://127.0.0.1:3001/';
+var CurrentProjectURI = 'http://127.0.0.1:3002/';
+var AirCADisWebServicesURI = 'https://localhost:44313/api/'
 
-var AirCADiaNebosURI = 'https://aircadia.azurewebsites.net/';
-var CurrentProjectURI = 'https://aircadiawindturbine.azurewebsites.net/';
+//var AirCADiaNebosURI = 'https://aircadia.azurewebsites.net/';
+//var CurrentProjectURI = 'https://aircadiawindturbine.azurewebsites.net/';
+//var AirCADisWebServicesURI = 'https://localhost:44313/api/workflow'
 
 
 
@@ -1458,6 +1460,15 @@ async function initialiseProject() {
             AddModelNode(model);
         }
     }
+
+
+    // Workflows
+    for (var i = 0; i < projectJson['workflows'].length; i++) {
+        let workflow = projectJson['workflows'][i];
+        if (!nebosProject.workflows.some(w => w.name == workflow.name)) {
+            AddWorkflowNode(workflow);
+        }
+    }
 }
 
 //========================//
@@ -1486,54 +1497,61 @@ async function initialiseProject() {
 
 var grid_Execute =
 {
+    view: "form",
     id: "ExecutionUI",
-    cols: [
+    elements: [
         {
-            id: "ExecutionTree",
-            view: "tree",
-            width: 200,
-            select: true,
-            data:
-                [
-                    {
-                        id: "ExecutionTreeModelsNode", open: true, value: "Models", data: []
-                    },
-                    {
-                        id: "ExecutionTreeWorkflowsNode", open: true, value: "Workflows", data: []
-                    },
-                    {
-                        id: "ExecutionTreeStudiesNode", open: true, value: "Studies", data: []
-                    }
-                ]
-        },
-
-        { view: "resizer" },
-        {
-            rows: [
+            cols: [
                 {
-                    id: "executionTable",
-                    view: "datatable",
-                    editable: true,
-                    //autowidth: true,
-                    //autoheight: true,
-                    columns: [
-                        { id: "rank", header: "Rank", css: "rank", width: 50 },
-                        { id: "category", header: "Category", width: 200 },
-                        { id: "name", header: "Name", width: 200 },
-                        { id: "value", header: "Value", width: 80, editor: "text" },
-                        { id: "description", header: "Description", width: 100, minwidth: 100, fillspace: 1 }
-                    ],
-                    //autoheight: true,
-                    //autowidth: true,
-                    scroll: "auto",
-                    data: [
-                        { id: 1, category: "System.Wing.Span", name: "X1", value: 3, description: "Wing Span", rank: 1 },
-                        { id: 2, category: "System.Wing.Area", name: "X2", value: 4, description: "Wing Area", rank: 2 },
-                        { id: 3, category: "System.Wing.Weight", name: "Y", value: 0.0, description: "Wing Weight", rank: 3 }
-                    ]
+                    id: "ExecutionTree",
+                    view: "tree",
+                    width: 200,
+                    select: true,
+                    data:
+                        [
+                            {
+                                id: "ExecutionTreeModelsNode", open: true, value: "Models", data: []
+                            },
+                            {
+                                id: "ExecutionTreeWorkflowsNode", open: true, value: "Workflows", data: []
+                            },
+                            {
+                                id: "ExecutionTreeStudiesNode", open: true, value: "Studies", data: []
+                            }
+                        ]
                 },
+
+                { view: "resizer" },
                 {
-                    view: "button", value: "Execute", click: executeModel
+                    rows: [
+                        {
+                            id: "executionTable",
+                            view: "datatable",
+                            css: "webix_data_border webix_header_border",
+                            editable: true,
+                            resizeColumn: true,
+                            scroll: "xy",
+                            //autowidth: true,
+                            //autoheight: true,
+                            columns: [
+                                { id: "rank", header: "Rank", css: "rank", width: 50 },
+                                { id: "category", header: "Category", width: 200 },
+                                { id: "name", header: "Name", width: 200 },
+                                { id: "value", header: "Value", width: 80, editor: "text" },
+                                { id: "description", header: "Description", width: 100, minwidth: 100, fillspace: 1 }
+                            ],
+                            //autoheight: true,
+                            //autowidth: true,
+                            data: [
+                                { id: 1, category: "System.Wing.Span", name: "X1", value: 3, description: "Wing Span", rank: 1 },
+                                { id: 2, category: "System.Wing.Area", name: "X2", value: 4, description: "Wing Area", rank: 2 },
+                                { id: 3, category: "System.Wing.Weight", name: "Y", value: 0.0, description: "Wing Weight", rank: 3 }
+                            ]
+                        },
+                        {
+                            view: "button", value: "Execute", click: executeModel
+                        }
+                    ]
                 }
             ]
         }
@@ -1632,8 +1650,10 @@ function treeViewExecution_ItemClick(id) {
         for (let i = 0; i < workflow.inputs.length; i++) {
             let data;
             for (let j = 0; j < nebosProject['data'].length; j++) {
-                if (nebosProject['data'][j].name == workflow.inputs[i].name)
+                if (nebosProject['data'][j].name == workflow.inputs[i].name) {
                     data = nebosProject['data'][j];
+                    break;
+                }
             }
             let item = {};
             //item.id = i;
@@ -1645,12 +1665,19 @@ function treeViewExecution_ItemClick(id) {
         }
         // outputs
         for (let i = 0; i < workflow.outputs.length; i++) {
+            let data;
+            for (let j = 0; j < nebosProject['data'].length; j++) {
+                if (nebosProject['data'][j].name == workflow.outputs[i].name) {
+                    data = nebosProject['data'][j];
+                    break;
+                }
+            }
             let item = {};
             //item.id = i;
-            item.category = workflow.outputs[i].category;
-            item.name = workflow.outputs[i].name;
-            item.value = workflow.outputs[i].value;
-            item.description = workflow.outputs[i].description;
+            item.category = data.category;
+            item.name = data.name;
+            item.value = data.value;
+            item.description = data.description;
             $$("executionTable").add(item);
         }
     }
@@ -1737,6 +1764,9 @@ async function executeModel() {
         // prepare request json data
         var jData = {};
         jData.name = workflow.name;
+
+
+        // inputs
         jData.inputs = [];
         for (let i = 0; i < workflow.inputs.length; i++) {
             let dataName = workflow.inputs[i].name;
@@ -1744,6 +1774,8 @@ async function executeModel() {
             jData.inputs.push({ name: dataName, value: gridRecord.value });
             workflow.inputs[i].value = gridRecord.value;
         }
+
+        // outputs
         jData.outputs = [];
         for (let i = 0; i < workflow.outputs.length; i++) {
             let dataName = workflow.outputs[i].name;
@@ -1754,7 +1786,7 @@ async function executeModel() {
         let poni = JSON.stringify(workflow);
 
         // #region execution
-        let response = await fetch("https://localhost:44313/api/executeworkflow", {
+        let response = await fetch(AirCADisWebServicesURI + "executeworkflow", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'

@@ -250,7 +250,7 @@ async function CreateWorkflow() {
         // ##########################################
 
         //let uriOrchestrateWorkflow = nebosProject.endPoint.concat('create-workflow');
-        let uriOrchestrateWorkflow = "https://localhost:44313/api/workflow";
+        let uriOrchestrateWorkflow = AirCADisWebServicesURI + "workflow";
 
         let popun = JSON.stringify(workflowJson);
 
