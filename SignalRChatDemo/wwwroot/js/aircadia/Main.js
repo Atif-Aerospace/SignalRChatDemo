@@ -1,10 +1,10 @@
-﻿var AirCADiaNebosURI = 'http://127.0.0.1:3001/';
-var CurrentProjectURI = 'http://127.0.0.1:3002/';
-var AirCADisWebServicesURI = 'https://localhost:44313/api/'
+﻿////var AirCADiaNebosURI = 'http://127.0.0.1:3001/';
+////var CurrentProjectURI = 'http://127.0.0.1:3002/';
+////var AirCADisWebServicesURI = 'https://localhost:44313/api/'
 
-//var AirCADiaNebosURI = 'https://aircadia.azurewebsites.net/';
-//var CurrentProjectURI = 'https://aircadiawindturbine.azurewebsites.net/';
-//var AirCADisWebServicesURI = 'https://localhost:44313/api/workflow'
+var AirCADiaNebosURI = 'https://aircadia.azurewebsites.net/';
+var CurrentProjectURI = 'https://aircadiawindturbine.azurewebsites.net/';
+var AirCADisWebServicesURI = 'https://aircadiawebservices.azurewebsites.net/api/workflow'
 
 
 
