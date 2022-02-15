@@ -4,7 +4,7 @@
 
 var AirCADiaNebosURI = 'https://aircadia.azurewebsites.net/';
 var CurrentProjectURI = 'https://aircadiawindturbine.azurewebsites.net/';
-var AirCADisWebServicesURI = 'https://aircadiawebservices.azurewebsites.net/api/workflow'
+var AirCADisWebServicesURI = 'https://aircadiawebservices.azurewebsites.net/api/'
 
 
 
