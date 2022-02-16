@@ -1181,6 +1181,12 @@ function buttons(size) {
             image: "/images/AddNewRow24.png", width: 26,
             click: ImportData
         },
+        {
+            view: "button", type: "image", value: "Import Objects", tooltip: true,
+            image: "/images/AddNewRow24.png", width: 26,
+            click: ShowImportObjectsUI
+        },
+        
         //{
         //    view: "button", type: "image", label: "Info",
         //    image: "../../static/images/ThumbsUp24.png", width: 26,
